@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Nanboard by embarq</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Nanboard</h1>
+      <h2 class="project-tagline">Building simple RESTful API using Node.js, Express and MongodDB</h2>
+      <a href="https://github.com/embarq/node-tutorial" class="btn">View on GitHub</a>
+      <a href="https://github.com/embarq/node-tutorial/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/embarq/node-tutorial/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="Разработка-restful-api-на-nodejs" class="anchor" href="#%D0%A0%D0%B0%D0%B7%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B0-restful-api-%D0%BD%D0%B0-nodejs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Разработка RESTful API на Node.js</h1>
+
+<h2>
+<a id="foreword" class="anchor" href="#foreword" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Foreword</h2>
+
+<p>Итак, цель данного практикума - разработка RESTful API в среде Node.js.
+Посмотрим, что же говорят о Node.js на <a href="https://ru.wikipedia.org/wiki/Node.js">википедии</a>:</p>
+
+<blockquote>
+<p><strong>Node</strong> или <strong>Node.js</strong> - программная платформа, основанная на движке <strong>V8</strong> (транслирующем JavaScript в машинный код), превращающая JavaScript из узкоспециализированного языка в язык общего назначения</p>
+</blockquote>
+
+<p>Ну в общем-то так - <strong>Node.js</strong> - программная платформа, основанная на движке <strong>Javascript V8</strong>. Она позволит нам выполнять Javascript код на сервере.</p>
+
+<p>Как же  <strong>Node</strong> превращает наш старый-добрый, клиентский JS в язык общего назначения?</p>
+
+<ul>
+<li>Набор встроенных стандартных библиотек портированных из <code>C-lang</code>
+</li>
+<li>Пакетный менеджер <strong>NPM</strong> </li>
+<li>Кроссплатформенность </li>
+</ul>
+
+<p>Встроенные библиотеки <strong>Node</strong> дают отправную точку для построения чего угодно - на базе платформы <strong>Node</strong> разрабатываются сервисы от ПО умных домов и программирования дронов до высоко-нагруженных серверов с <em>10к+</em> одновременных подключений.</p>
+
+<blockquote>
+<p><strong>NPM</strong> - Встроенный пакентый менеджер, который позволяет вам использовать инструменты сторонних разработчиков, типа <a href="https://www.npmjs.com/package/babel"><code>babel</code></a>, <a href="https://www.npmjs.com/package/lodash"><code>lodash</code></a> или тот-же <a href="https://www.npmjs.com/package/jquery"><code>jquery</code></a> при разработке своих приложений или публиковать свои. Стоит помнить, что <strong>сторонние библиотеки и фреймворки не будут работать в браузере если они подключаются с помощью ф-ции <code>require</code></strong> .</p>
+
+<p><a href="https://habrahabr.ru/post/38730/"><strong>REST</strong></a>(Representational state transfer) - Это стиль архитектуры программного обеспечения для распределенных систем, таких как World Wide Web, который, как правило, используется для построения веб-служб. Термин REST был введен в 2000 году Роем Филдингом, одним из авторов HTTP-протокола. Системы, поддерживающие REST, называются RESTful-системами.</p>
+</blockquote>
+
+<h2>
+<a id="План-практикума" class="anchor" href="#%D0%9F%D0%BB%D0%B0%D0%BD-%D0%BF%D1%80%D0%B0%D0%BA%D1%82%D0%B8%D0%BA%D1%83%D0%BC%D0%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>План практикума</h2>
+
+<ol>
+<li>ТЗ</li>
+<li>Выбор инструментов</li>
+<li>Настройка окружения и рабочей среды</li>
+<li>Немного серверного-кода</li>
+</ol>
+
+<h2>
+<a id="ТЗ" class="anchor" href="#%D0%A2%D0%97" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>ТЗ</h2>
+
+<p>Нам дано такое <strong>техническое задание</strong>: нужно разработать RESTful API - Новостной сервис/агрегатор по шаблону проектирования <a href="https://ru.wikipedia.org/wiki/Model-View-Controller"><strong>MVC</strong></a> на базе платформы <strong>Node.js</strong> и данных  <a href="https://www.theguardian.com/"><strong>The Guardian</strong></a></p>
+
+<h2>
+<a id="Выбор-инструментов" class="anchor" href="#%D0%92%D1%8B%D0%B1%D0%BE%D1%80-%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D0%BE%D0%B2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Выбор инструментов</h2>
+
+<h3>
+<a id="Сервер" class="anchor" href="#%D0%A1%D0%B5%D1%80%D0%B2%D0%B5%D1%80" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Сервер</h3>
+
+<p>Основой нашего сервиса будет веб-фреймворк - <a href="http://expressjs.com/ru/"><code>epxress.js</code></a>:</p>
+
+<blockquote>
+<p>Express
+: это минималистичный и гибкий веб-фреймворк для приложений Node.js, предоставляющий обширный набор функций для мобильных и веб-приложений. Имея в своем распоряжении множество служебных методов HTTP и промежуточных обработчиков, создать надежный API можно быстро и легко. Express предоставляет тонкий слой фундаментальных функций веб-приложений, которые не мешают вам работать с давно знакомыми и любимыми вами функциями Node.js</p>
+</blockquote>
+
+<p>В нашем же случае, <strong>Express</strong> позволяет легко и быстро <em>поднять</em>  API-сервис.</p>
+
+<p>Дополнительные инструменты:</p>
+
+<ul>
+<li>
+<a href="https://www.npmjs.com/package/async"><code>async</code></a> - инструмент который позволяет немного упростить и привести ваш асинхронный код к более красивому и читаемому виду</li>
+<li>
+<a href="https://nodejs.org/api/http.html"><code>http</code></a>/<a href="https://nodejs.org/api/https.html"><code>https</code></a> - стандартный http-модуль, который поставляется вместе с Node.js</li>
+</ul>
+
+<h3>
+<a id="База-данных-и-модель-данных" class="anchor" href="#%D0%91%D0%B0%D0%B7%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B8-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>База данных и модель данных</h3>
+
+<p>В роли базы данных будем использовать <a href="https://www.mongodb.com"><strong>MongoDB</strong></a>:</p>
+
+<blockquote>
+<p><strong>MongoDB</strong>
+: (от англ. <em>humongous — огромный</em>) — документоориентированная система управления базами данных (СУБД) с открытым исходным кодом, не требующая описания схемы таблиц. Написана на языке <code>C++</code></p>
+</blockquote>
+
+<p>Выбор <strong>MongoDB</strong> в роли основной базы данных обоснован высокой производительностью СУБД и легкостью в манипуляции данными, а так-же то, что ТЗ соответствует основному use-case'у для данной СУБД, а именно - хранение и управление данными с неявной структурой.</p>
+
+<p>В качестве менеджера моделей данных будем использовать <a href="http://mongoosejs.com/"><code>mongoose</code></a> - обертку, позволяющую создавать удобные и функциональные схемы документов.</p>
+
+<h2>
+<a id="Настройка-окружения-и-рабочей-среды" class="anchor" href="#%D0%9D%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-%D0%BE%D0%BA%D1%80%D1%83%D0%B6%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B8-%D1%80%D0%B0%D0%B1%D0%BE%D1%87%D0%B5%D0%B9-%D1%81%D1%80%D0%B5%D0%B4%D1%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Настройка окружения и рабочей среды</h2>
+
+<p>План <del>побега</del> действий таков:</p>
+
+<ol>
+<li>Создание структуры рабочей директории </li>
+<li>Установка и настройка Node.js, NPM и MongoDB</li>
+<li>Инициализация проекта и установка зависимостей</li>
+<li>Конфигурирование MongoDB для проекта</li>
+</ol>
+
+<h3>
+<a id="Создание-структуры-рабочей-директории" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%82%D1%83%D1%80%D1%8B-%D1%80%D0%B0%D0%B1%D0%BE%D1%87%D0%B5%D0%B9-%D0%B4%D0%B8%D1%80%D0%B5%D0%BA%D1%82%D0%BE%D1%80%D0%B8%D0%B8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Создание структуры рабочей директории</h3>
+
+<pre><code>project-root/
+    `-- etc/                    -&gt; configs, logs
+    `-- node_modules/           -&gt; npm packages
+        `-- async/
+        `-- express/
+        `-- ...
+    `-- public/                 -&gt; client-side statics
+        `-- templates/          -&gt; client-side templates
+        `-- vendor/             -&gt; client-side packages
+            `-- bootstrap/
+            `-- bootswatch/
+            `-- ...
+    `-- server/                 -&gt; server-side logic
+        `-- controllers/        -&gt; server-side controllers
+        `-- lib/                -&gt; self-written libs
+        `-- models/             -&gt; server-side models
+        `-- routes/             -&gt; api routes
+        `-- views/              -&gt; server-side templates
+            `-- layouts/        -&gt; server-side layouts
+</code></pre>
+
+<p>Папка <code>node_modules/</code> генерируются автоматически - <strong>создавать её вручную не нужно</strong>, и изменять без должного понимания не рекомендуется</p>
+
+<h3>
+<a id="Установка-и-настройка-nodejs-npm-и-mongodb" class="anchor" href="#%D0%A3%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-%D0%B8-%D0%BD%D0%B0%D1%81%D1%82%D1%80%D0%BE%D0%B9%D0%BA%D0%B0-nodejs-npm-%D0%B8-mongodb" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Установка и настройка Node.js, NPM и MongoDB</h3>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=tlntE8fe6u4">Установка Node.js(Brad Traversy)</a></li>
+<li><a href="http://metanit.com/nosql/mongodb/1.2.php">Установка MongoDB по версии METANIT</a></li>
+</ul>
+
+<h3>
+<a id="Инициализация-проекта-и-установка-зависимостей" class="anchor" href="#%D0%98%D0%BD%D0%B8%D1%86%D0%B8%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0-%D0%B8-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-%D0%B7%D0%B0%D0%B2%D0%B8%D1%81%D0%B8%D0%BC%D0%BE%D1%81%D1%82%D0%B5%D0%B9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Инициализация проекта и установка зависимостей</h3>
+
+<p>Приступим к инициализации проекта. Для того чтобы иметь возможность устанавливать <code>npm</code> и <code>bower</code> модули нужно для этого инициализировать соответствующие конфигурации проектов.
+Для <code>npm</code> это:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm init</pre></div>
+
+<p>или:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm init -y</pre></div>
+
+<p><img src="https://snag.gy/ByTLia.jpg" alt="enter image description here"></p>
+
+<p>Разница между ними только в том, что <code>npm init</code> с флагом <code>-y</code> инициализирует проект с указанием полей конфигурационного файла по-умолчанию, а в первом случае вы можете заполнить их по своему усмотрению. Узнать больше о <code>npm</code> конфигурации можно <a href="https://docs.npmjs.com/cli/config">тут</a> и <a href="https://habrahabr.ru/post/243335/">тут</a>.</p>
+
+<blockquote>
+<p><strong>Зачем вообще нужны пакетные менеджеры?</strong>
+Менеджеры пакетов упрощают установку и обновление зависимостей проекта, то есть сторонних библиотек, которые он использует: jQuery, Fotorama, все, что используется на твоем сайте и написано не тобой. Хождение по сайтам библиотек, скачивание и распаковка архивов, копирование файлов в проект — все это заменяется парой команд в терминале.
+У многих языков программирования есть стандартные менеджеры пакетов, которыми разработчики пользуются для установки всех библиотек: gem у Ruby, pip у Python и другие.</p>
+</blockquote>
+
+<p>Для того чтобы установить какой-нибудь пакет/модуль/плагин/библиотеку/фреймворк/whatever нужна лишь одна команда <code>npm</code>:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install module_name library_name ...</pre></div>
+
+<p><code>npm</code> скачает заархивированный модуль со всеми его зависимостями, распакует и установит в автогенерируемую под-директорию вашего проекта <code>node_modules</code>.</p>
+
+<p>Команда <code>npm install</code> имеет ряд важных флагов, среди которых <code>-g</code>, <code>-S</code>, <code>-D</code>:</p>
+
+<p>Флаг <code>-g</code> сообщает  <code>npm</code>, что данные модуль/модули нужно установить <strong>глобально</strong>, что означает что они в дальнейшем будут доступны из любого места на вашем ПК. Чаще всего данный флаг используется для установки CLI-<a href="https://habrahabr.ru/post/126605/">инструментов</a></p>
+
+<p>Флаги <code>-S</code> и <code>-D</code> сообщают <code>npm</code> о том, что после установки пакетов нужно записать их в список зависимостей <code>package.json</code>. Разница между ними в том, что <code>-S</code> используется для сохранения пакета как основной зависимости т.е. такой, которая  важна для функционала вашего проекта а <code>-D</code> для сохранения пакета как зависимость которая полезна для разработки, но никак не влияет на работоспособность приложения, это могут быть: сборщики, разного рода компиляторы, инструменты тестирования и др.</p>
+
+<p>Флаг <code>-S</code> является алиасом для флага <code>--save</code>, и <code>-D</code> для <code>--save-dev</code>, и в конце-концов у самой команды <code>install</code> есть сокращенный вариант <code>i</code>, т.е. и такая запись будет правильной:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm i -S some-module</pre></div>
+
+<p>И такая:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ npm install --save some-module</pre></div>
+
+<p>Теперь соберем в одну кучу весь список зависимостей:</p>
+
+<ul>
+<li><code>async</code></li>
+<li><code>express</code></li>
+<li><code>express-handlebars</code></li>
+<li><code>mongoose</code></li>
+</ul>
+
+<p>И установим их.</p>
+
+<h3>
+<a id="Конфигурирование-mongodb-для-проекта" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5-mongodb-%D0%B4%D0%BB%D1%8F-%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Конфигурирование MongoDB для проекта</h3>
+
+<p><strong>Mongo</strong> - эта СУБД из разряда <strong>No-SQL</strong> баз данных - она хранит данные не  в виде классических SQL таблиц, таких как в PostgreSQL, MySQL  или MSSQL. Взамен все данные в MongoDB представляются в виде <a href="https://ru.wikipedia.org/wiki/JSON"><code>JSON</code></a>-объектов и хранятся в виде <a href="https://ru.wikipedia.org/wiki/BSON"><code>BSON</code></a> - формата бинарного представления простейших структур данных JavaScript. Так как это не старые-добрые таблички в SQL, то и композиция данных тут другая: в то время, как типичная база данных SQL состоит из таблиц -  база данных MongoDB состоит из <strong>коллекций</strong>; вместо строк в таблицах SQL коллекция MongoDB содержит <strong>документы</strong>, а вместо колонок строки в SQL таблице документ принимает вид JS объекта. Полями <strong>документа</strong> по стандарту <code>JSON</code> могут быть строки, числа, массивы и объекты.</p>
+
+<p>Для того, чтобы мы могли работать с базой данных, нужно наладить соединение с ней. Если вы правильно установили <strong>MongoDB</strong>, то, для начала, нужно запустить <a href="https://en.wikipedia.org/wiki/Daemon_(computing)"><em>демон</em></a> <a href="https://docs.mongodb.com/manual/reference/program/mongod.exe/"><code>mongod</code></a>. Находится он, обычно, в директории <code>${MongoDB src}/Server/${MongoDB version}/bin/</code></p>
+
+<p>Для удобства вы можете создать директорию <code>.data</code> в корне своего проекта и исполняемый файл <code>mongod.bat</code> для <code>Windows</code> или <code>mongod.sh</code> с правами доступа <code>a+x</code> для <code>UNIX</code>-систем с таким содержанием:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-smi">${path_to_mongod}</span> --dbpath=.data</pre></div>
+
+<p>Где <code>${path_to_mongod}</code> - путь до исполняемого файла <code>mongod</code> на вешей системе.</p>
+
+<p>Для запуска в среде Cloud9:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ sudo apt-get install -y mongodb-org
+$ mkdir .data
+$ <span class="pl-c1">echo</span> <span class="pl-s"><span class="pl-pds">'</span>mongod --bind_ip=$IP --dbpath=.data --nojournal --rest "$@"<span class="pl-pds">'</span></span> <span class="pl-k">&gt;</span> mongod
+$ chmod a+x mongod</pre></div>
+
+<p>И запустить вызовом нашего простого скрипта:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ ./mongod</pre></div>
+
+<p><img src="https://snag.gy/lOLYVe.jpg" alt="UNIX"></p>
+
+<p>В среде Cloud9:</p>
+
+<p><img src="https://snag.gy/FkiU94.jpg" alt="enter image description here"></p>
+
+<p><img src="https://snag.gy/BJgNEn.jpg" alt="enter image description here"></p>
+
+<p>Для работы с <strong>MongoDB</strong> напрямую, можно запустить хост <code>mongo</code> в директории <code>${MongoDB src}/Server/${MongoDB version}/bin/</code>. </p>
+
+<p>Если хост запущен успешно, вы увидите:</p>
+
+<div class="highlight highlight-source-shell"><pre>MongoDB shell version: 3.2.9
+connecting to: <span class="pl-c1">test</span>
+<span class="pl-k">&gt;</span></pre></div>
+
+<p>Командой <code>show dbs</code> хост выведет все доступные базы данных</p>
+
+<p><img src="https://snag.gy/A460nb.jpg" alt="enter image description here"></p>
+
+<p>Для вывода доступных команд можно ввести</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-k">&gt;</span> <span class="pl-en">db.help</span>()</pre></div>
+
+<p><img src="https://snag.gy/2lZAMJ.jpg" alt="enter image description here"></p>
+
+<h2>
+<a id="План-реализации" class="anchor" href="#%D0%9F%D0%BB%D0%B0%D0%BD-%D1%80%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D0%B8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>План реализации</h2>
+
+<p>Базовый принцип работы RESTful API - есть набор роутов(маршрутов), по которым проходит пользователь, и в зависимости от конкретного роута реагирует назначенный контроллер модели.</p>
+
+<p>Что можно понимать под "реагированием"? Известно, что есть несколько основных типов <code>http</code>-запросов: <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>. Так, в зависимости от требуемого функционала контроллер реагирует на запрос и возвращает определенный набор данных(ответ)</p>
+
+<p>В нашем случае, контроллеры будут реагировать только на <code>GET</code>-запросы т.к. требуется только получать информацию.</p>
+
+<p>Роут - это, определенный маршрут с параметрами и аргументами который строится над <code>url</code> сайта или приложения:</p>
+
+<div class="highlight highlight-source-httpspec"><pre>https://www.theguardian.com/world/europe-news</pre></div>
+
+<p>Разберем данный адрес, и посмотрим, что тут является роутом, а что нет:</p>
+
+<div class="highlight highlight-source-shell"><pre>https://            <span class="pl-c"># протокол</span>
+theguardian.com     <span class="pl-c"># домен</span>
+/world/europe-news  <span class="pl-c"># роут</span></pre></div>
+
+<p>В данном <code>URL</code> мы запросим под-категорию новостей <code>/europe-news</code> категории <code>/world</code> новостного сайта <code>guardian.com</code> по защищенному протоколу подключения <code>https://</code></p>
+
+<p>По функционалу, наш сервис будет схож с <a href="https://www.theguardian.com/international">The Guardian</a>, а именно хранить и отображать данные, полученные из <code>http://content.guardianapis.com</code></p>
+
+<p>Теперь можно определить основные роуты(маршруты) для нашего сервиса:</p>
+
+<div class="highlight highlight-source-shell"><pre>/                   <span class="pl-c"># index route</span>
+/news/              <span class="pl-c"># news section root</span>
+/news<span class="pl-k">?</span>id            <span class="pl-c"># get a single article</span>
+/news<span class="pl-k">?</span>sections      <span class="pl-c"># get multiple sections</span>
+/news/latest        <span class="pl-c"># latest news section</span>
+/news:section       <span class="pl-c"># get a section articles </span></pre></div>
+
+<p>В начале разработки серверной части нам нужно подключить зависимости и настроить наш сервер, как отправную точку для дальнейшей разработки и функционирования сервиса.</p>
+
+<p>Затем нужно описать модель данных, контроллер модели и роутер, настроить отображение данных.</p>
+
+<h2>
+<a id="Немного-серверного-кода" class="anchor" href="#%D0%9D%D0%B5%D0%BC%D0%BD%D0%BE%D0%B3%D0%BE-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BA%D0%BE%D0%B4%D0%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Немного серверного кода</h2>
+
+<ol>
+<li>Создание конфигурационного файла</li>
+<li>
+<code>app.js</code> как стартовая точка сервера</li>
+<li>Получение данных из <code>content.guardian.api</code>
+</li>
+<li>Модель данных</li>
+<li>Контроллеры</li>
+<li>Роуты</li>
+<li>Последние приготовления и запуск</li>
+</ol>
+
+<h3>
+<a id="Создание-конфигурационного-файла" class="anchor" href="#%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%84%D0%B8%D0%B3%D1%83%D1%80%D0%B0%D1%86%D0%B8%D0%BE%D0%BD%D0%BD%D0%BE%D0%B3%D0%BE-%D1%84%D0%B0%D0%B9%D0%BB%D0%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Создание конфигурационного файла</h3>
+
+<p>Создадим файл <code>config.js</code> в директории <code>etc</code>. 
+В этом файле мы опишем константы, которые будут использоватся в дальнейшем при разработке и работе сервиса:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> config <span class="pl-k">=</span> {
+    SERVER<span class="pl-k">:</span> {
+        HOST<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
+        PORT<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">PORT</span> <span class="pl-k">||</span> <span class="pl-c1">3000</span>
+    },
+    DATABASE<span class="pl-k">:</span> {
+        HOST<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
+        NAME<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>newsdb<span class="pl-pds">'</span></span> 
+    },
+    API<span class="pl-k">:</span> {
+        KEY<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>...<span class="pl-pds">'</span></span>,
+        SECTIONS<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>world<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>sport<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>football<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>commentisfree<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>culture<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>business<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>lifeandstyle<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>fashion<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>environment<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>technology<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>travel<span class="pl-pds">'</span></span>],
+        FIELDS<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>headline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>trailText<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>byline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>body<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>shortUrl<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>thumbnail<span class="pl-pds">'</span></span>]
+    }
+}
+
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> config;</pre></div>
+
+<p>Для обьекта <code>API</code>, в частности для его поля <code>KEY</code> нужно <a href="https://bonobo.capi.gutools.co.uk/register/developer">зарегестрировать свой ключ доступа</a>.</p>
+
+<p>Так же, именно последняя строка <code>module.exports = config</code> позволяет нам подключать данный файл в другие модули нашего приложения</p>
+
+<h3>
+<a id="appjs-как-стартовая-точка-сервера" class="anchor" href="#appjs-%D0%BA%D0%B0%D0%BA-%D1%81%D1%82%D0%B0%D1%80%D1%82%D0%BE%D0%B2%D0%B0%D1%8F-%D1%82%D0%BE%D1%87%D0%BA%D0%B0-%D1%81%D0%B5%D1%80%D0%B2%D0%B5%D1%80%D0%B0" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><code>app.js</code> как стартовая точка сервера</h3>
+
+<p>Создадим файл <code>app.js</code> в директории <code>server</code>. Подключим установленные ранее зависимости и наш ранее созданный  конфиг:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> express      <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express<span class="pl-pds">'</span></span>),
+    path         <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>path<span class="pl-pds">'</span></span>),
+    handlebars   <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express-handlebars<span class="pl-pds">'</span></span>),
+    mongoose     <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>mongoose<span class="pl-pds">'</span></span>),
+    config       <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../etc/config<span class="pl-pds">'</span></span>);</pre></div>
+
+<p>Вы можете заметить тут модуль <code>path</code> о котором раньше ничего не говорилось. Модуль <a href="https://nodejs.org/api/path.html"><code>path</code></a> является встроенным модулем Node.js и содержит утилиты для работы с путями.</p>
+
+<p>Далее инициализируем наше приложение вызовом ф-ции <code>express</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> app <span class="pl-k">=</span> <span class="pl-en">express</span>();</pre></div>
+
+<p>И запустим сервер простым вызовом метода <code>express</code> <strong><code>listen</code></strong>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">app</span>.<span class="pl-en">listen</span>(<span class="pl-smi">config</span>.<span class="pl-c1">SERVER</span>.<span class="pl-c1">PORT</span>, <span class="pl-smi">config</span>.<span class="pl-c1">SERVER</span>.<span class="pl-c1">HOST</span>, () <span class="pl-k">=&gt;</span>
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">`</span><span class="pl-cce">\n</span>Magic happens on port <span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">SERVER</span>.<span class="pl-c1">PORT</span><span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>));</pre></div>
+
+<p>Что здесь происходит: мы говорим нашему <code>express</code>-приложению прослушивать определенный нами <code>PORT</code> на определенном <code>HOST</code> и использовать данный адрес как отправную точку нашего приложения. Например:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// http://${HOST}:${PORT}</span>
+http<span class="pl-k">:</span><span class="pl-c">//localhost:3000/</span></pre></div>
+
+<p><strong>Внимание</strong> - дальнейшие изменения нужно будет вносить после инициализации переменной <code>app</code> и до запуска сервера <code>app.listen()</code>!</p>
+
+<p>Чтобы проверить, что все мы сделали правильно, сервер нужно запустить простой командой:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ node server/app</pre></div>
+
+<p><img src="https://snag.gy/b1DifB.jpg" alt="enter image description here"></p>
+
+<h3>
+<a id="Получение-данных-из-contentguardianapi" class="anchor" href="#%D0%9F%D0%BE%D0%BB%D1%83%D1%87%D0%B5%D0%BD%D0%B8%D0%B5-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85-%D0%B8%D0%B7-contentguardianapi" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Получение данных из <code>content.guardian.api</code>
+</h3>
+
+<p>Для того чтобы получить данные из <strong>Guardian API</strong> нам нужно сделать <code>GET</code>-запрос к <strong>Guardian</strong> RESTful API. Для этого  мы будем использовать стандартную реализацию <code>http</code> в <strong>Node.js</strong> и нашь уже подготовленный конфиг. Посмотреть и потрогать <strong>Guardian API</strong> можно <a href="http://open-platform.theguardian.com/explore/">здесь</a>.</p>
+
+<p>Создадим файл <code>guardian-get.js</code> в директории <code>server/lib</code> и подключим все что нам потребуется, а именно <code>http</code> и <code>https</code> модули и нашь конфиг:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> http <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>http<span class="pl-pds">'</span></span>),
+    https  <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>https<span class="pl-pds">'</span></span>),
+    config <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../../etc/config<span class="pl-pds">'</span></span>);</pre></div>
+
+<p>Далее определим главную функцию:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">httpGET</span> <span class="pl-k">=</span> (<span class="pl-smi">options</span>, <span class="pl-smi">done</span>, <span class="pl-smi">err</span>) <span class="pl-k">=&gt;</span> { }</pre></div>
+
+<p>Расшифрую аргументы функции:</p>
+
+<ul>
+<li>
+<code>options</code> - обьект конфигурации запроса, будет рассмотрен далее</li>
+<li>
+<code>done</code> - callback-функция, которая будет вызвана при успешном окончании запроса</li>
+<li>
+<code>err</code> - callback-функция - обработчик ошибок </li>
+</ul>
+
+<p>Принцип работы функции будет таким:</p>
+
+<ul>
+<li>Определить подключение: защищенное / незащищенное</li>
+<li>Запустить асинхронное выполнение запроса</li>
+<li>Собирать данные по мере их поступления</li>
+<li>По окончании запроса вызвать callback-функцию <code>done</code>
+</li>
+<li>При возникновении ошибки вызвать обработчик</li>
+</ul>
+
+<p>Приступим к реализации:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">httpGET</span> <span class="pl-k">=</span> (<span class="pl-smi">options</span>, <span class="pl-smi">done</span>, <span class="pl-smi">err</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-c">// Определить подключение: защищенное / незащищенное</span>
+    <span class="pl-k">var</span> server <span class="pl-k">=</span> <span class="pl-smi">options</span>.<span class="pl-c1">port</span> <span class="pl-k">===</span> <span class="pl-c1">443</span> <span class="pl-k">?</span> https <span class="pl-k">:</span> http;
+    <span class="pl-c">// Запустить асинхронное выполнение запроса</span>
+    <span class="pl-k">var</span> req <span class="pl-k">=</span> <span class="pl-smi">server</span>.<span class="pl-en">request</span>(options, <span class="pl-smi">res</span> <span class="pl-k">=&gt;</span> {
+        <span class="pl-c">// Строка, в которую мы будем собирать входящие данные</span>
+        <span class="pl-k">let</span> output <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>;
+        <span class="pl-c">// Кодировка, в которой мы хотим получить данные</span>
+        <span class="pl-smi">res</span>.<span class="pl-en">setEncoding</span>(<span class="pl-s"><span class="pl-pds">'</span>utf8<span class="pl-pds">'</span></span>);
+        <span class="pl-c">// Собирать данные по мере их поступления</span>
+        <span class="pl-smi">res</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>data<span class="pl-pds">'</span></span>, <span class="pl-smi">chunk</span> <span class="pl-k">=&gt;</span> output <span class="pl-k">+=</span> chunk);
+        <span class="pl-c">// По окончании запроса вызвать callback "done" и передать в него полученные данные</span>
+        <span class="pl-smi">res</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>end<span class="pl-pds">'</span></span>, () <span class="pl-k">=&gt;</span> <span class="pl-en">done</span>(<span class="pl-c1">JSON</span>.<span class="pl-c1">parse</span>(output)));
+        <span class="pl-c">// Выведем состояние запроса</span>
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">`</span>Request status: <span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">options</span>.<span class="pl-c1">host</span><span class="pl-pse">}</span></span>:<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">res</span>.<span class="pl-smi">statusCode</span><span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>);
+    });
+
+    <span class="pl-c">// При возникновении ошибки вызвать обработчик</span>
+    <span class="pl-smi">req</span>.<span class="pl-en">on</span>(<span class="pl-s"><span class="pl-pds">'</span>error<span class="pl-pds">'</span></span>, err);
+    <span class="pl-c">// Закрыть подключение</span>
+    <span class="pl-smi">req</span>.<span class="pl-en">end</span>();
+}</pre></div>
+
+<p>Нет, я не забыл описать тот загадочный объект <code>options</code>. Этот объект описывает, или другими словами настраивает наш <code>http</code>-запрос. Он должен содержать такие поля: <code>host</code>, <code>port</code>, <code>path</code>, <code>method</code>, <code>headers</code></p>
+
+<ul>
+<li>
+<code>host</code>: базовый адрес, к которому мы обращаемся или URI определяющий путь к запрашиваемому документу</li>
+<li>
+<code>port</code>: порт подключения</li>
+<li>
+<code>path</code>: здесь мы описываем запрос к <code>host</code>'у</li>
+<li>
+<code>method</code>:  <a href="https://ru.wikipedia.org/wiki/HTTP#.D0.9C.D0.B5.D1.82.D0.BE.D0.B4.D1.8B">вид запроса</a> - <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>
+</li>
+<li>
+<code>headers</code>:  строки HTTP-сообщения, содержащие разделённую двоеточием пару параметр-значение</li>
+</ul>
+
+<p>Описывать объект <code>options</code> мы будем при вызове нашей функции <code>httpGET</code> из анонимной функции-обёртки:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">module</span>.<span class="pl-en">exports</span> <span class="pl-k">=</span> (<span class="pl-smi">query</span>, <span class="pl-smi">done</span>, <span class="pl-smi">err</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-c">// Шаблон запроса к The Guardian</span>
+    <span class="pl-k">var</span> queryTemplate <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">`</span>/search?show-fields=<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">API</span>.<span class="pl-c1">FIELDS</span>.<span class="pl-c1">join</span>(<span class="pl-s"><span class="pl-pds">'</span>,<span class="pl-pds">'</span></span>)<span class="pl-pse">}</span></span>&amp;api-key=<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">API</span>.<span class="pl-c1">KEY</span><span class="pl-pse">}</span></span>&amp;<span class="pl-s1"><span class="pl-pse">${</span>query<span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>;
+    <span class="pl-k">var</span> requestOptions <span class="pl-k">=</span> {
+        host<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>content.guardianapis.com<span class="pl-pds">'</span></span>,   <span class="pl-c">// API-endpoint</span>
+        port<span class="pl-k">:</span> <span class="pl-c1">443</span>,
+        path<span class="pl-k">:</span> queryTemplate,
+        method<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>GET<span class="pl-pds">'</span></span>,
+        headers<span class="pl-k">:</span> {
+            <span class="pl-s"><span class="pl-pds">'</span>Content-Type<span class="pl-pds">'</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>application/json<span class="pl-pds">'</span></span>
+        }
+    };
+
+    <span class="pl-en">httpGET</span>(requestOptions, done, err);
+};</pre></div>
+
+<p>Протестировать этот скрипт можно с помощью <a href="https://nodejs.org/api/repl.html">Node REPL</a>:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ node
+<span class="pl-k">&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>use strict<span class="pl-pds">'</span></span>
+<span class="pl-k">&gt;</span> var get = require(<span class="pl-s"><span class="pl-pds">'</span>./server/lib/guardian-get<span class="pl-pds">'</span></span>)<span class="pl-k">;</span>
+<span class="pl-k">&gt;</span> get(<span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>, console.log.<span class="pl-c1">bind</span>(console), console.log.<span class="pl-c1">bind</span>(console))<span class="pl-k">;</span></pre></div>
+
+<p>Если вы все правильно ввели, то статус запроса должен быть таким:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-k">&gt;</span> Request status: content.guardianapis.com:200</pre></div>
+
+<p>И через некоторое время вы получите ответ от  <code>content.guardianapis.com</code>:</p>
+
+<div class="highlight highlight-source-json"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>response<span class="pl-pds">"</span></span>:{
+        <span class="pl-s"><span class="pl-pds">"</span>currentPage<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>pageSize<span class="pl-pds">"</span></span>:<span class="pl-c1">10</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>pages<span class="pl-pds">"</span></span>:<span class="pl-c1">189508</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>total<span class="pl-pds">"</span></span>:<span class="pl-c1">1895080</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>userTier<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>developer<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>startIndex<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>results<span class="pl-pds">"</span></span>:[
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ],
+            [ <span class="pl-s"><span class="pl-pds">"</span>Object<span class="pl-pds">"</span></span> ]
+        ],
+        <span class="pl-s"><span class="pl-pds">"</span>status<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>ok<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>orderBy<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>newest<span class="pl-pds">"</span></span>
+    }
+}</pre></div>
+
+<p><img src="https://snag.gy/iGsNVR.jpg" alt="enter image description here"></p>
+
+<h3>
+<a id="Модель-данных" class="anchor" href="#%D0%9C%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Модель данных</h3>
+
+<p>Хотите пример структуры данных при использовании <strong>Mongoose</strong> с моими кривыми стрелочками?</p>
+
+<p><img src="http://i66.tinypic.com/4qo35x.jpg" alt="enter image description here"></p>
+
+<p><strong>Моделью</strong> в нашем проекте будет считаться некоторая сущность-информационная единица, которая будет хранится в базе данных, а именно <strong>MongoDB</strong>, и которая будет иметь поведение, или другими словами содержать в себе несколько вспомогательных методов для работы с БД. Определять модель данных мы будем с помощью библиотеки <code>mongoose</code>. <strong>Mongoose</strong> будет оборачивать наши данные в специальную <a href="http://mongoosejs.com/docs/guide.html">схему данных</a> для дальнейшего их использования нашим сервисом. </p>
+
+<p>Теперь, когда <em>демон</em> успешно <strong>запущен</strong>, нам нужно добавить всего одну строчку в <code>app.js</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">mongoose</span>.<span class="pl-en">connect</span>(
+    <span class="pl-s"><span class="pl-pds">`</span>mongodb://<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">DATABASE</span>.<span class="pl-c1">HOST</span><span class="pl-pse">}</span></span>/<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">DATABASE</span>.<span class="pl-c1">NAME</span><span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>, 
+    <span class="pl-smi">err</span> <span class="pl-k">=&gt;</span> {
+        <span class="pl-k">if</span> (err) <span class="pl-k">throw</span> err;
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">"</span>Magic connected to database<span class="pl-pds">"</span></span>);
+    });</pre></div>
+
+<p>Первым аргумент - <code>url</code> подключения к БД, второй - <code>callback</code> который уведомит нас об ошибке или успешном выполении</p>
+
+<p><img src="https://snag.gy/m9tnzS.jpg" alt="enter image description here"></p>
+
+<h4>
+<a id="Схема-данных" class="anchor" href="#%D0%A1%D1%85%D0%B5%D0%BC%D0%B0-%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Схема данных</h4>
+
+<p>Пришло время занятся схемой нашей будущей модели. Схема или <code>Mongoose.Schema</code> позволяет нам функционально и семантически разметить тип хранимых нами в БД данных. Процесс описания схемы чем-то схож с созданием новой таблицы в SQL-подобных СУбД - нам нужно описать название полей объекта, их тип и другие параметры. Но это только аналогия, документы <strong>MongoDB</strong> в лице <strong>Mongoose</strong>-схем штука порядком мощнее, но это вы и сами в дальнейшем увидите. А сейчас приступим к схеме. Создадим файл <code>guardian-content.model.js</code> в директории <code>server/models</code> с таким содержимым:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> mongoose <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>mongoose<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> GuardianContentSchema <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">mongoose.Schema</span>({
+    id<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        index<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    },
+    sectionId<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    webPublicationDate<span class="pl-k">:</span> <span class="pl-c1">Date</span>,
+    title<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    webUrl<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    fields<span class="pl-k">:</span> {
+        headline<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        trailText<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        byline<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        main<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        body<span class="pl-k">:</span> <span class="pl-c1">String</span>
+    }
+});</pre></div>
+
+<p>Внимание - тип поля <code>fields</code> - объект, а его значением является вложенная схема. Да - так тоже можно, это же <code>JSON</code>. Это же <code>JS</code> в конце-концов - у нас тут все можно ;)</p>
+
+<p>Мы можем расширить определение полей немногим количеством опциональных параметров, например: </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> GuardianContentSchema <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">mongoose.Schema</span>({
+    id<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        index<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    },
+    sectionId<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        required<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    },
+    type<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        default<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>article<span class="pl-pds">'</span></span>
+    },
+    webPublicationDate<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">Date</span>,
+        default<span class="pl-k">:</span> <span class="pl-c1">Date</span>.<span class="pl-smi">now</span>
+    },
+    title<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        required<span class="pl-k">:</span> <span class="pl-c1">true</span>,
+        trim<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    },
+    webUrl<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        required<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    }
+}</pre></div>
+
+<p>Здесь:</p>
+
+<ul>
+<li>
+<code>index</code> указывает, что по этому полю документы будут индексироваться</li>
+<li>
+<code>required</code> задает поле как обязательное для заполнения</li>
+<li>
+<code>default</code> - значение по умолчанию</li>
+<li>
+<code>trim</code> - имплементация все того-же <a href="https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/String/Trim"><code>String.prototype.trim()</code></a> </li>
+</ul>
+
+<p>Но это был демонстрационный пример, продолжать мы будем с первой, лаконичной версией.</p>
+
+<p>С описанием схемы/модели/прототипа данных мы закончим, передав в конструктор <code>Mongoose.Schema()</code> дополнительный параметр опций. Добавим данный сниппет кода перед определением схемы:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> GuardianContentSchemaOptions <span class="pl-k">=</span> {
+    timestamps<span class="pl-k">:</span> {},
+    safe<span class="pl-k">:</span> <span class="pl-c1">true</span>
+}</pre></div>
+
+<p>Данные опции позволяют присваивать даты создания и изменения конкретной модели. Передадим их в конструктор:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> GuardianContentSchema <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">mongoose.Schema</span>({
+    <span class="pl-c">// Schema...</span>
+}, GuardianContentSchemaOptions);</pre></div>
+
+<p>Вот теперь можно сказать, что со схемой данных мы закончили. Теперь нужно определить модель данных:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> GuardianContentModel <span class="pl-k">=</span> <span class="pl-smi">mongoose</span>.<span class="pl-en">model</span>(<span class="pl-s"><span class="pl-pds">"</span>news<span class="pl-pds">"</span></span>, GuardianContentSchema);
+
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> GuardianContentModel;</pre></div>
+
+<p>Здесь мы определяем <code>mongoose</code>-модель с помощью конструктора <code>mongoose.model</code>, который принимает два параметра - название модели и схему данных. Далее, при создании первого объекта модели в нашей базе данных автоматически создастся коллекция с с именем модели во множественном числе, т.е. в нашем случае это будет так и останеться - "news". Но если бы мы определяли модель под названием "apple" или "bill" то создались бы коллекции под названием "apples" и "bills" соответственно.  </p>
+
+<p>Теперь можем проверить работоспособность нашей модели</p>
+
+<div class="highlight highlight-source-shell"><pre>$ node
+<span class="pl-k">&gt;</span> var mongoose = require(<span class="pl-s"><span class="pl-pds">'</span>mongoose<span class="pl-pds">'</span></span>)<span class="pl-k">;</span>
+<span class="pl-k">&gt;</span> var Model = require(<span class="pl-s"><span class="pl-pds">'</span>./server/models/guardian-content-model.js<span class="pl-pds">'</span></span>)<span class="pl-k">;</span>
+<span class="pl-k">&gt;</span> new Model({id: <span class="pl-s"><span class="pl-pds">"</span>sport/article<span class="pl-pds">"</span></span>, sectionId: <span class="pl-s"><span class="pl-pds">"</span>sport<span class="pl-pds">"</span></span>, <span class="pl-c1">type</span>: <span class="pl-s"><span class="pl-pds">"</span>article<span class="pl-pds">"</span></span>, webPublicationDate: <span class="pl-en">Date.now</span>(), title: <span class="pl-s"><span class="pl-pds">"</span>New section<span class="pl-pds">"</span></span>, webUrl: <span class="pl-s"><span class="pl-pds">"</span>http://google.com<span class="pl-pds">"</span></span>, fields: {}});</pre></div>
+
+<p><img src="https://snag.gy/vz86xl.jpg" alt="enter image description here"></p>
+
+<h4>
+<a id="Поведение-модели-и-вспомогательные-методы" class="anchor" href="#%D0%9F%D0%BE%D0%B2%D0%B5%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D0%B8-%D0%B8-%D0%B2%D1%81%D0%BF%D0%BE%D0%BC%D0%BE%D0%B3%D0%B0%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5-%D0%BC%D0%B5%D1%82%D0%BE%D0%B4%D1%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Поведение модели и вспомогательные методы</h4>
+
+<p><strong>Mongoose</strong> определяет несколько типов  функций для манипуляций данными:</p>
+
+<ul>
+<li>Встроенные методы</li>
+<li>Пользовательские методы</li>
+<li>Статические методы</li>
+<li>Вспомогательные запросы</li>
+</ul>
+
+<p>Мы будем использовать несколько встроенных методов библиотеки <strong>Mongoose</strong>:</p>
+
+<ul>
+<li>
+<code>find()</code> и <code>findOne()</code>
+</li>
+<li><code>sort()</code></li>
+<li><code>limit()</code></li>
+<li><code>save()</code></li>
+</ul>
+
+<p>Для ф-ций <code>find()</code> и <code>findOne()</code> аргументом является объект-конфиг поиска. Пример для нашей модели данных:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// Получить статьи только этого года</span>
+<span class="pl-k">var</span> query <span class="pl-k">=</span> { 
+    type<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>article<span class="pl-pds">"</span></span>,
+    webPublicationDate<span class="pl-k">:</span> <span class="pl-k">new</span> <span class="pl-en">Date</span>().<span class="pl-c1">getFullYear</span>() 
+} 
+
+<span class="pl-smi">Model</span>.<span class="pl-c1">find</span>(query)
+    .<span class="pl-c1">exec</span>(<span class="pl-en">console</span>.<span class="pl-smi">log</span>.<span class="pl-en">bind</span>(<span class="pl-en">console</span>));</pre></div>
+
+<p>Мы будем определять свои вспомогательные функции запросов. Об остальных типах вы можете узнать из <a href="http://mongoosejs.com/docs/guide.html">документации</a></p>
+
+<p>Нам понадобятся четыре ф-ции:</p>
+
+<ul>
+<li><code>byContentId</code></li>
+<li><code>latest</code></li>
+<li><code>bySections</code></li>
+<li><code>bySection</code></li>
+</ul>
+
+<p>Синтаксис использования вспомогательных ф-ций будет примерно таков:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Model</span>.<span class="pl-c1">find</span>()
+    .<span class="pl-en">byContentId</span>(<span class="pl-s"><span class="pl-pds">"</span>i'm an id of section<span class="pl-pds">"</span></span>)
+    .<span class="pl-c1">exec</span>(callback);</pre></div>
+
+<p>В ф-цию <code>exec</code> передается <code>callback</code> с двумя аргументами - объект ошибки и объект найденных данных:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">let</span> <span class="pl-en">searchCallback</span> <span class="pl-k">=</span> (<span class="pl-smi">err</span>, <span class="pl-smi">data</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">if</span> (err) {
+        <span class="pl-k">throw</span> err;
+    } <span class="pl-k">else</span> {
+        <span class="pl-c">// Do something with data</span>
+    }
+}</pre></div>
+
+<p>Итак, приступим к реализации. Для начала изобразим ф-цию <code>byContentId</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">byContentId</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">id</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-en">findOne</span>({ 
+        id<span class="pl-k">:</span> id
+    });
+};</pre></div>
+
+<p>Здесь метод <code>Model.findOne</code> является встроенным, и из названия можно догадаться, что возвращает он только один экземпляр документа с переданными в него опциями.  </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">latest</span> <span class="pl-k">=</span> <span class="pl-k">function</span>() {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>()
+        .<span class="pl-c1">sort</span>(<span class="pl-s"><span class="pl-pds">'</span>-date<span class="pl-pds">'</span></span>)
+        .<span class="pl-en">limit</span>(<span class="pl-c1">10</span>);
+};</pre></div>
+
+<p>Метод вернет последние документы по дате отсортированные по убыванию</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">bySections</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">sections</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>({ 
+            sectionId<span class="pl-k">:</span> { 
+                $in<span class="pl-k">:</span> <span class="pl-smi">sections</span>.<span class="pl-c1">split</span>(<span class="pl-s"><span class="pl-pds">'</span>,<span class="pl-pds">'</span></span>) 
+            }
+        })
+        .<span class="pl-en">limit</span>(<span class="pl-c1">20</span>);
+};</pre></div>
+
+<p>Данный метод вернет документы по секциям, определенным в массиве <code>sections</code>. 
+И наконец, получение статей по определенной секции:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">bySection</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">section</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>({ 
+            sectionId<span class="pl-k">:</span> section 
+        })
+        .<span class="pl-en">limit</span>(<span class="pl-c1">10</span>);
+};</pre></div>
+
+<p><strong>Внимание</strong>, определить данные методы нужно <strong>перед</strong> определением модели.</p>
+
+<p>После определения модели, добавим ей еще один метод - <code>spread</code>, который упростит нашу жизнь в будущем:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentModel</span>.<span class="pl-en">spread</span> <span class="pl-k">=</span> (<span class="pl-smi">items</span>, <span class="pl-smi">done</span>) <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">items</span>.<span class="pl-c1">forEach</span>(<span class="pl-smi">item</span> <span class="pl-k">=&gt;</span>
+        <span class="pl-k">new</span> <span class="pl-en">GuardianContentModel</span>(item)
+            .<span class="pl-en">save</span>(done));</pre></div>
+
+<p>Он сохраняет множество/массив элементов и принимает два аргумента:</p>
+
+<ul>
+<li>
+<code>items</code> - массив <code>JS</code> объектов, который нужно сохранить</li>
+<li>
+<code>done</code> - ф-ция которая выполнится после сохранении <strong>каждого</strong> документа<br>
+</li>
+</ul>
+
+<p>И того, с схемой и моделью данных мы закончили:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">// server/models/guardian-content-model.js</span>
+<span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> mongoose <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>mongoose<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> GuardianContentSchemaOptions <span class="pl-k">=</span> {
+    timestamps<span class="pl-k">:</span> {},
+    safe<span class="pl-k">:</span> <span class="pl-c1">true</span>
+}
+
+<span class="pl-k">var</span> GuardianContentSchema <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">mongoose.Schema</span>({
+    id<span class="pl-k">:</span> {
+        type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        index<span class="pl-k">:</span> <span class="pl-c1">true</span>
+    },
+    sectionId<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    type<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    webPublicationDate<span class="pl-k">:</span> <span class="pl-c1">Date</span>,
+    title<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    webUrl<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+    fields<span class="pl-k">:</span> {
+        headline<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        trailText<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        byline<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        main<span class="pl-k">:</span> <span class="pl-c1">String</span>,
+        body<span class="pl-k">:</span> <span class="pl-c1">String</span>
+    }
+}, GuardianContentSchemaOptions);
+
+<span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">byContentId</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">id</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-en">findOne</span>({ 
+        id<span class="pl-k">:</span> id 
+    });
+};
+
+<span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">latest</span> <span class="pl-k">=</span> <span class="pl-k">function</span>() {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>()
+        .<span class="pl-c1">sort</span>(<span class="pl-s"><span class="pl-pds">'</span>-date<span class="pl-pds">'</span></span>)
+        .<span class="pl-en">limit</span>(<span class="pl-c1">10</span>);
+};
+
+<span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">ofSections</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">sections</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>({ 
+            sectionId<span class="pl-k">:</span> { 
+                $in<span class="pl-k">:</span> <span class="pl-smi">sections</span>.<span class="pl-c1">split</span>(<span class="pl-s"><span class="pl-pds">'</span>,<span class="pl-pds">'</span></span>) 
+            }
+        })
+        .<span class="pl-en">limit</span>(<span class="pl-c1">20</span>);
+};
+
+<span class="pl-smi">GuardianContentSchema</span>.<span class="pl-smi">query</span>.<span class="pl-en">ofSection</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">section</span>) {
+    <span class="pl-k">return</span> <span class="pl-v">this</span>.<span class="pl-c1">find</span>({ 
+            sectionId<span class="pl-k">:</span> section 
+        })
+        .<span class="pl-en">limit</span>(<span class="pl-c1">10</span>);
+};
+
+<span class="pl-k">var</span> GuardianContentModel <span class="pl-k">=</span> <span class="pl-smi">mongoose</span>.<span class="pl-en">model</span>(<span class="pl-s"><span class="pl-pds">"</span>news<span class="pl-pds">"</span></span>, GuardianContentSchema);
+
+<span class="pl-smi">GuardianContentModel</span>.<span class="pl-en">spread</span> <span class="pl-k">=</span> (<span class="pl-smi">items</span>, <span class="pl-smi">done</span>) <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">items</span>.<span class="pl-c1">forEach</span>(<span class="pl-smi">item</span> <span class="pl-k">=&gt;</span>
+        <span class="pl-k">new</span> <span class="pl-en">GuardianContentModel</span>(item)
+            .<span class="pl-en">save</span>(done));
+
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> GuardianContentModel;</pre></div>
+
+<h3>
+<a id="Контроллеры" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D0%BB%D0%B5%D1%80%D1%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Контроллеры</h3>
+
+<h4>
+<a id="index-controller" class="anchor" href="#index-controller" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Index controller</h4>
+
+<p>Index-контроллер будет отвечать за переход к корню сайта, т.е. к роуту <code>/</code>. По функционалу, <code>index</code>-контроллер обычно следит за состоянием авторизации пользователя, который проходит по роута, кеширование или инициализацию БД.</p>
+
+<p>В нашем случае, <code>index</code>-контроллер будет иметь только один метод <code>reserve</code>, который будет обновлять БД актуальным контентом из <strong>Guardian API</strong>.</p>
+
+<p>Создадим файл <code>index.controller.js</code> в директории <code>server/controllers</code> и первым делом подключим зависимости. Нам понадобятся модуль <code>async</code>, наш конфигурационный файл, <code>http-get</code>-функция и наша модель данных:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> <span class="pl-k">async</span>       <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>async<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> config      <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../../etc/config<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> guardianGet <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../lib/guardian-get<span class="pl-pds">'</span></span>);
+<span class="pl-k">var</span> Model       <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../models/guardian-content.model<span class="pl-pds">'</span></span>);</pre></div>
+
+<p>Т.к. метод в данном контроллере будет только один, то мы можем определить его сразу в объект <code>module.exports</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">module</span>.<span class="pl-smi">exports</span>.<span class="pl-en">reserve</span> <span class="pl-k">=</span> () <span class="pl-k">=&gt;</span> {
+    <span class="pl-c">// Whatever...</span>
+};</pre></div>
+
+<p>Итак, что должен делать наш метод? Нам нужно получить данные(статьи, посты и т.д.) по каждому новостному-разделу сайта <code>The Guardian</code> и сохранить их в БД. Но как нам это сделать?</p>
+
+<p>Самое очевидное, что первое приходит на ум - это пройтись по массиву названий секций, получить каждую по очереди и сохранить в БД. Так и сделаем:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">module</span>.<span class="pl-smi">exports</span>.<span class="pl-en">reserve</span> <span class="pl-k">=</span> () <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">config</span>.<span class="pl-c1">API</span>.<span class="pl-c1">SECTIONS</span>.<span class="pl-c1">forEach</span>(<span class="pl-smi">section</span> <span class="pl-k">=&gt;</span>
+        <span class="pl-en">guardianGet</span>(<span class="pl-s"><span class="pl-pds">`</span>section=<span class="pl-s1"><span class="pl-pse">${</span> section <span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>, (<span class="pl-smi">data</span>, <span class="pl-smi">err</span>) <span class="pl-k">=&gt;</span> {
+            <span class="pl-k">if</span> (err) <span class="pl-k">throw</span> err;
+            <span class="pl-smi">Model</span>.<span class="pl-en">spread</span>(<span class="pl-smi">data</span>.<span class="pl-smi">response</span>.<span class="pl-smi">results</span>, (<span class="pl-smi">err</span>, <span class="pl-smi">doc</span>) <span class="pl-k">=&gt;</span> 
+                <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err <span class="pl-k">?</span> 
+                    err <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">`</span>[<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">doc</span>.<span class="pl-c1">id</span><span class="pl-pse">}</span></span>] saved to <span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">DB</span>.<span class="pl-c1">NAME</span><span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>))
+        }));</pre></div>
+
+<p>Ну вот, неплохой-такой спагетти-код. Но тут ничего сложного пока нет. Мы проходим итератором по массиву разделов и для каждого формируем <code>GET</code>-запрос передавая первым аргументом в ф-цию <code>guardianGet</code> строку запроса. По окончании запроса, т.е. получении данных по каждому разделу сохраняем множество статей в БД с помощью ф-ции <code>spread</code>. Но этот весь этот код, включая ф-цию <code>Model.spread</code>, будет работать <strong>синхронно</strong>, т.е. пока, на данный момент при срабатывании данного контроллера будем <strong>синхронно</strong> получать 110 статей за раз. </p>
+
+<p>Допустим, нашим приложением будет пользоваться только один пользователь и обрабатывать 100-300 статей в сутки не такая и большая нагрузка, но если таких пользователей будет 300 или 3000? Посчитать разницу не сложно, а сервер нашего приложения  будет только <strong>один</strong>. </p>
+
+<p>Т.е. ситуация: пользователь <code>А</code> заходит на наш сайт, контроллер обновляет базу данных <strong>синхронно</strong>. Примерно в тот-же момент наш сайт посещает еще один пользователь <code>B</code> и на его сессию контроллер срабатывает так-же. Только один момент - контроллер ждет, пока обновление БД закончится после посещения сайта пользователем <code>A</code>, и только потом начнет получать и обрабатывать данные для сессии пользователя <code>B</code>. А если вернутся в начало, и если, примерно в тот-же момент, что и пользователь <code>A</code> на наш сайт заходят еще 50? Все - приложение для клиентов повиснет, и никто из оставшихся 49 ждущих пользователей не будет ждать загрузки контента, а может и пользователь <code>А</code> не будет. </p>
+
+<p>В таком случае нам нужно как-то выходить из ситуации, а именно с помощью <strong>асинхронных</strong> операций. Мы можем изменить архитектуру нашего сервера таким образом, что определенное множество операций не будут блокировать друг-друга а выполняться <em>независимо</em>.</p>
+
+<p>Начнем с метода <code>spread</code> нашей модели. На данный момент он выглядит так:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentModel</span>.<span class="pl-en">spread</span> <span class="pl-k">=</span> (<span class="pl-smi">items</span>, <span class="pl-smi">done</span>) <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">items</span>.<span class="pl-c1">forEach</span>(<span class="pl-smi">item</span> <span class="pl-k">=&gt;</span>
+        <span class="pl-k">new</span> <span class="pl-en">GuardianContentModel</span>(item)
+            .<span class="pl-en">save</span>(done));</pre></div>
+
+<p>Синхронность операций в этом методе выражается прямо в его алгоритме:</p>
+
+<ol>
+<li>Береться <code>n</code> елемент</li>
+<li>На его основе инициализируется модель</li>
+<li>Модель сохраняется в базу данных</li>
+</ol>
+
+<p>Это привычный нам поток выполнения инструкции любой стандартной программы, но проблемы начинаются с первых строк: в то время, как проводятся манипуляции над <code>n</code> элементом массива, <code>n+1</code> элемент ожидает окончания выполнения операций над элементом <code>n</code>. В данном случае это не кажется столь критичным, так как и <strong>JS</strong>, и <strong>MongoDB</strong> довольно быстры. Ну, хорошо когда с производительностью ваших инструментов проблем нет, но данная проблема содержится не в инструментах, а в потоке данных, точнее в их количестве.</p>
+
+<blockquote>
+<p>Чем больше данных, тем больше время их обработки!</p>
+</blockquote>
+
+<p>Мы можем немного расширить реализацию уже существующего алгоритма с помощью библиотеки <code>async</code>. Не забудьте <strong>подключить</strong> данную библиотеку!</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">GuardianContentModel</span>.<span class="pl-en">spread</span> <span class="pl-k">=</span> (<span class="pl-smi">items</span>, <span class="pl-smi">done</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">var</span> tasks <span class="pl-k">=</span> <span class="pl-smi">items</span>.<span class="pl-en">map</span>(<span class="pl-smi">item</span> <span class="pl-k">=&gt;</span> <span class="pl-k">function</span> <span class="pl-en">task</span>() {
+        <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-en">GuardianContentModel</span>(item).<span class="pl-en">save</span>(done);
+    });
+
+    <span class="pl-k">async</span>.<span class="pl-en">parallel</span>(tasks, 
+        () <span class="pl-k">=&gt;</span> <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>Data saved successfuly!<span class="pl-pds">'</span></span>));
+};</pre></div>
+
+<p>Здесь мы формируем массив задач на каждую операцию инициализации модели, т.е. в конце-концов мы получим массив синхронных функций которые нужно будет запустить асинхронно. Во время  Запускать мы их будем с помощью метода <code>parallel</code>. Вот и все, теперь данный метод будет запускаться асинхронно. </p>
+
+<p>Так же сделаем рефакторинг нашего <code>index</code>-контроллера:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">module</span>.<span class="pl-smi">exports</span>.<span class="pl-en">reserve</span> <span class="pl-k">=</span> () <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">var</span> <span class="pl-en">saveToDatabase</span> <span class="pl-k">=</span> (<span class="pl-smi">data</span>, <span class="pl-smi">err</span>) <span class="pl-k">=&gt;</span>
+        <span class="pl-smi">Model</span>.<span class="pl-en">spread</span>(<span class="pl-smi">data</span>.<span class="pl-smi">response</span>.<span class="pl-smi">results</span>, (<span class="pl-smi">err</span>, <span class="pl-smi">doc</span>) <span class="pl-k">=&gt;</span> 
+            <span class="pl-en">console</span>.<span class="pl-c1">log</span>(err <span class="pl-k">?</span> err <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">`</span>[<span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">doc</span>.<span class="pl-c1">id</span><span class="pl-pse">}</span></span>] saved to <span class="pl-s1"><span class="pl-pse">${</span><span class="pl-smi">config</span>.<span class="pl-c1">DB</span>.<span class="pl-c1">NAME</span><span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>));
+
+    <span class="pl-k">var</span> asyncTasks <span class="pl-k">=</span> <span class="pl-smi">config</span>.<span class="pl-c1">API</span>.<span class="pl-c1">SECTIONS</span>.<span class="pl-en">map</span>(<span class="pl-smi">section</span> <span class="pl-k">=&gt;</span> 
+        <span class="pl-k">function</span> <span class="pl-en">task</span>() {
+            <span class="pl-k">return</span> <span class="pl-en">guardianGet</span>(<span class="pl-s"><span class="pl-pds">`</span>section=<span class="pl-s1"><span class="pl-pse">${</span> section <span class="pl-pse">}</span></span><span class="pl-pds">`</span></span>, saveToDatabase);
+        });
+
+    <span class="pl-k">async</span>.<span class="pl-en">parallel</span>(asyncTasks, () <span class="pl-k">=&gt;</span> 
+        <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>Data reserved successfuly<span class="pl-pds">'</span></span>));
+};</pre></div>
+
+<h4>
+<a id="news-controller" class="anchor" href="#news-controller" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>News controller</h4>
+
+<p>Этот контроллер будет контроллером модели. Он будет той самой прослойкой между бизнес-логикой и данными нашего приложения.</p>
+
+<p>В данном случае, нам нужны методы, которые будут в определенном случае обращаться к модели для получения данных:</p>
+
+<ul>
+<li>
+<code>get</code> - будет отвечать за обработку определенной статьи или множества разделов</li>
+<li>
+<code>getSection</code> - будет отвечать за получение статей из определенного раздела </li>
+<li>
+<code>getLatest</code> - будет отвечать за получение свежих новостей</li>
+</ul>
+
+<p>Каждый из методов будет функцией вида:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">anotherMethod</span> <span class="pl-k">=</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-c">// Whatever</span>
+}</pre></div>
+
+<p>Такие ф-ции являются неким <em>шаблоном</em> для работы с роутами <code>express</code>-фреймворка. В дальнейшем, когда мы будем связывать наши роутеры с нашими контроллерами, в аргументы методов будут передаваться специальные объекты <a href="http://expressjs.com/ru/4x/api.html#req"><code>Request</code></a> и <a href="http://expressjs.com/ru/4x/api.html#res"><code>Response</code></a>.</p>
+
+<p>Объект <code>Request</code> представляет <code>http</code>-запрос и имеет свойства присущие ему - строку запроса, тело запроса, заголовки и <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html">т.д.</a></p>
+
+<p>Объект <code>Response</code> - инструмент отправки данных в <code>express</code>. Основные <a href="http://expressjs.com/ru/4x/api.html#res">методы</a> которые мы будем использовать:  </p>
+
+<ul>
+<li>
+<code>status</code> - отправляет клиенту статус его запроса</li>
+<li>
+<code>json</code> - передает данные в формате <code>JSON</code>
+</li>
+</ul>
+
+<p>Создадим файл <code>index.controller.js</code> в директории <code>server/controllers</code> и подключим нашу модель.</p>
+
+<p>Можно сразу вынести функцию-обработчик полученных данных из БД:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">handleData</span> <span class="pl-k">=</span> (<span class="pl-smi">err</span>, <span class="pl-smi">data</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">if</span> (err) {
+        <span class="pl-smi">res</span>.<span class="pl-c1">status</span>(<span class="pl-c1">404</span>);    <span class="pl-c">// not found</span>
+        <span class="pl-en">console</span>.<span class="pl-c1">error</span>(err);
+    } <span class="pl-k">else</span> {
+        <span class="pl-smi">res</span>.<span class="pl-c1">status</span>(<span class="pl-c1">200</span>)
+            .<span class="pl-en">json</span>(data);    <span class="pl-c">// ok/found</span>
+    }
+};</pre></div>
+
+<p>Далее определим три вышеописанных метода данного контроллера:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">get</span> <span class="pl-k">=</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-k">if</span> (<span class="pl-smi">req</span>.<span class="pl-smi">query</span>.<span class="pl-c1">id</span>) {
+        <span class="pl-smi">Model</span>.<span class="pl-c1">find</span>()
+            .<span class="pl-en">byContentId</span>(<span class="pl-smi">req</span>.<span class="pl-smi">query</span>.<span class="pl-c1">id</span>)
+            .<span class="pl-c1">exec</span>((<span class="pl-smi">err</span>, <span class="pl-smi">data</span>) <span class="pl-k">=&gt;</span>
+                <span class="pl-en">handleData</span>(err, data, res));
+    } <span class="pl-k">else</span> {
+        <span class="pl-smi">Model</span>.<span class="pl-c1">find</span>()
+            .<span class="pl-en">bySections</span>(<span class="pl-smi">req</span>.<span class="pl-smi">query</span>.<span class="pl-smi">sections</span>)
+            .<span class="pl-c1">exec</span>((<span class="pl-smi">err</span>, <span class="pl-smi">data</span>) <span class="pl-k">=&gt;</span>
+                <span class="pl-en">handleData</span>(err, data, res));
+    }
+};
+
+<span class="pl-k">var</span> <span class="pl-en">getSection</span> <span class="pl-k">=</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">Model</span>.<span class="pl-c1">find</span>()
+        .<span class="pl-en">bySection</span>(<span class="pl-smi">req</span>.<span class="pl-smi">params</span>.<span class="pl-smi">section</span>)
+        .<span class="pl-c1">exec</span>((<span class="pl-smi">err</span>, <span class="pl-smi">data</span>) <span class="pl-k">=&gt;</span> 
+            <span class="pl-en">handleData</span>(err, data, res));
+
+<span class="pl-k">var</span> <span class="pl-en">getLatest</span> <span class="pl-k">=</span> (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span>
+    <span class="pl-smi">Model</span>.<span class="pl-c1">find</span>()
+        .<span class="pl-en">latest</span>()
+        .<span class="pl-c1">exec</span>((<span class="pl-smi">err</span>, <span class="pl-smi">data</span>) <span class="pl-k">=&gt;</span> 
+            <span class="pl-en">handleData</span>(err, data, res));</pre></div>
+
+<p>И осталось только экспортировать этот контроллер:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> {
+    get<span class="pl-k">:</span> get,
+    getSection<span class="pl-k">:</span> getSection,
+    getLatest<span class="pl-k">:</span> getLatest
+}</pre></div>
+
+<h3>
+<a id="Роуты" class="anchor" href="#%D0%A0%D0%BE%D1%83%D1%82%D1%8B" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Роуты</h3>
+
+<p>Определение роута в <code>express</code> выглядит таким образом:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-smi">Express</span>.<span class="pl-smi">Router</span>.<span class="pl-c1">method</span>(path, handler);</pre></div>
+
+<p>Набор <code>handler</code>-ов мы определили ранее в виде контроллеров. В таком случае осталось привязать их у определенным маршрутам.</p>
+
+<p>Создадим два файла в директории <code>server/routes/</code>: <code>index.route.js</code> и <code>news.route.js</code></p>
+
+<p>Для <code>index.route.js</code> введем: </p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> router     <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express<span class="pl-pds">'</span></span>).<span class="pl-en">Router</span>();
+<span class="pl-k">var</span> controller <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../controllers/index.controller<span class="pl-pds">'</span></span>);
+
+<span class="pl-smi">router</span>.<span class="pl-c1">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span>, (<span class="pl-smi">req</span>, <span class="pl-smi">res</span>) <span class="pl-k">=&gt;</span> {
+    <span class="pl-smi">res</span>.<span class="pl-c1">status</span>(<span class="pl-c1">201</span>)     <span class="pl-c">// 201 - Webpage created</span>
+        .<span class="pl-en">render</span>(<span class="pl-s"><span class="pl-pds">'</span>home<span class="pl-pds">'</span></span>);
+    <span class="pl-smi">controller</span>.<span class="pl-en">reserve</span>();
+});
+
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> router;</pre></div>
+
+<p>Здесь мы создаем экземпляр <code>express</code>-роутера, настраиваем с помощью него и <code>index</code>-контроллера маршрутизацию и экспортируем это все как модуль.</p>
+
+<p>Для <code>news.route.js</code> поступаем аналогично:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-s"><span class="pl-pds">"</span>use strict<span class="pl-pds">"</span></span>;
+
+<span class="pl-k">var</span> router     <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>express<span class="pl-pds">'</span></span>).<span class="pl-en">Router</span>();
+<span class="pl-k">var</span> controller <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>../controllers/news.controller<span class="pl-pds">'</span></span>);
+
+<span class="pl-smi">router</span>.<span class="pl-c1">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span>, <span class="pl-smi">controller</span>.<span class="pl-smi">get</span>);
+<span class="pl-smi">router</span>.<span class="pl-c1">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/latest<span class="pl-pds">'</span></span>, <span class="pl-smi">controller</span>.<span class="pl-smi">getLatest</span>);
+<span class="pl-smi">router</span>.<span class="pl-c1">get</span>(<span class="pl-s"><span class="pl-pds">'</span>/:section<span class="pl-pds">'</span></span>, <span class="pl-smi">controller</span>.<span class="pl-smi">getSection</span>);
+
+<span class="pl-c1">module</span>.<span class="pl-smi">exports</span> <span class="pl-k">=</span> router;</pre></div>
+
+<h3>
+<a id="Последние-приготовления-и-запуск" class="anchor" href="#%D0%9F%D0%BE%D1%81%D0%BB%D0%B5%D0%B4%D0%BD%D0%B8%D0%B5-%D0%BF%D1%80%D0%B8%D0%B3%D0%BE%D1%82%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F-%D0%B8-%D0%B7%D0%B0%D0%BF%D1%83%D1%81%D0%BA" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Последние приготовления и запуск</h3>
+
+<p>Теперь осталось подключить наши роутеры в <code>app.js</code>. Подключать мы будем их перед вызовом метода <code>app.listen()</code>:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> routes <span class="pl-k">=</span> {
+    index<span class="pl-k">:</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./routes/index.route<span class="pl-pds">'</span></span>),
+    news<span class="pl-k">:</span>  <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>./routes/news.route<span class="pl-pds">'</span></span>)
+}
+
+<span class="pl-smi">app</span>.<span class="pl-en">use</span>(<span class="pl-s"><span class="pl-pds">'</span>/<span class="pl-pds">'</span></span>, <span class="pl-smi">routes</span>.<span class="pl-c1">index</span>);
+<span class="pl-smi">app</span>.<span class="pl-en">use</span>(<span class="pl-s"><span class="pl-pds">'</span>/news/<span class="pl-pds">'</span></span>, <span class="pl-smi">routes</span>.<span class="pl-smi">news</span>);</pre></div>
+
+<p>Теперь, откроем браузер и если введем в адресную строку временный адрес нашего приложения:</p>
+
+<div class="highlight highlight-source-httpspec"><pre>http://localhost:<span class="pl-c1">3000</span>/</pre></div>
+
+<p>То увидим, что ничего не происходит:</p>
+
+<p><img src="https://snag.gy/cREdte.jpg" alt="enter image description here"></p>
+
+<p>Но нет, на самом деле происходит:</p>
+
+<p><img src="https://snag.gy/UuRxJE.jpg" alt="enter image description here"></p>
+
+<p>Просто наш <code>index</code>-контроллер ничего не отправляет, а всего лишь выполняет одну, заложенную в него нами функцию - а именно получает данный извне и сохраняет их в БД. Вот и все.</p>
+
+<p>Но если мы перейдем по адресу:</p>
+
+<div class="highlight highlight-source-httpspec"><pre>http://localhost:<span class="pl-c1">3000</span>/news/latest</pre></div>
+
+<p>То получим примерно такую <code>JSON</code>-ину:</p>
+
+<p><img src="https://snag.gy/SEoFwt.jpg" alt="enter image description here"></p>
+
+<p>Если <a href="https://jsonformatter.curiousconcept.com/">отформатировать</a> её, то увидим, что, насчет модели, все сходится:</p>
+
+<div class="highlight highlight-source-json"><pre>[
+    {
+        <span class="pl-s"><span class="pl-pds">"</span>_id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>57fab3ef5fcb400a98c525ea<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>updatedAt<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2016-10-09T21:17:35.946Z<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>createdAt<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2016-10-09T21:17:35.946Z<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>webUrl<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://www.theguardian.com/fashion/2016/oct/09/the-new-scent-of-a-woman-top-autumn-perfumes<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>webPublicationDate<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>2016-10-09T05:00:02.000Z<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>fashion/2016/oct/09/the-new-scent-of-a-woman-top-autumn-perfumes<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>sectionId<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>fashion<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>article<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>__v<span class="pl-pds">"</span></span>: <span class="pl-c1">0</span>,
+        <span class="pl-s"><span class="pl-pds">"</span>fields<span class="pl-pds">"</span></span>:{
+            <span class="pl-s"><span class="pl-pds">"</span>trailText<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Autumn has never smelled better, with wonderful new scents from established names and some lively newcomers, too, says Eva Wiseman<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>headline<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>The new scent of a woman<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>body<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;!-- A lot of HTML --&gt;<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>main<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;!-- Some HTML --&gt;<span class="pl-pds">"</span></span>,
+            <span class="pl-s"><span class="pl-pds">"</span>byline<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Eva Wiseman<span class="pl-pds">"</span></span>
+        }
+    },
+    <span class="pl-ii">//</span> <span class="pl-ii">Another</span> <span class="pl-ii">items</span> <span class="pl-ii">next...</span>
+]</pre></div>
+
+<p>Если попробуем получить по <code>id</code>:</p>
+
+<p><img src="https://snag.gy/zk4esD.jpg" alt="enter image description here"></p>
+
+<p>Несколько разделов</p>
+
+<p><img src="https://snag.gy/4TZJNp.jpg" alt="enter image description here"></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/embarq/node-tutorial">Nanboard</a> is maintained by <a href="https://github.com/embarq">embarq</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
