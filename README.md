@@ -91,6 +91,7 @@ project-root/
 
  - [Установка Node.js(Brad Traversy)](https://www.youtube.com/watch?v=tlntE8fe6u4)
  - [Установка MongoDB по версии METANIT](http://metanit.com/nosql/mongodb/1.2.php)
+- [Установка в UNIX-среде](http://stackoverflow.com/questions/28945921/e-unable-to-locate-package-mongodb-org)
 
 Для работы в среде Cloud9:
 
@@ -207,6 +208,12 @@ connecting to: test
 ```
 
 ![enter image description here](https://snag.gy/2lZAMJ.jpg)
+
+Далее следует создать базу данных для нашего проекта простой командой:
+
+```bash
+> use newsdb
+```
 
 ## План реализации
 Базовый принцип работы RESTful API таков: есть набор роутов(маршрутов), по которым проходит пользователь, и в зависимости от конкретного роута реагирует назначенный контроллер модели.
