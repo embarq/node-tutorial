@@ -13,6 +13,9 @@
     <section class="page-header">
       <h1 class="project-name">Nanboard</h1>
       <h2 class="project-tagline">Building simple RESTful API using Node.js, Express and MongodDB</h2>
+      <a href="https://github.com/embarq/node-tutorial" class="btn">View on GitHub</a>
+      <a href="https://github.com/embarq/node-tutorial/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/embarq/node-tutorial/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
@@ -308,18 +311,18 @@ theguardian.com     <span class="pl-c"># домен</span>
 В этом файле мы опишем константы, которые будут использоватся в дальнейшем при разработке и работе сервиса:</p>
 
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> config <span class="pl-k">=</span> {
-    SERVER<span class="pl-k">:</span> {
-        HOST<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
-        PORT<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">PORT</span> <span class="pl-k">||</span> <span class="pl-c1">3000</span>
+    <span class="pl-c1">SERVER</span><span class="pl-k">:</span> {
+        <span class="pl-c1">HOST</span><span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
+        <span class="pl-c1">PORT</span><span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">PORT</span> <span class="pl-k">||</span> <span class="pl-c1">3000</span>
     },
-    DATABASE<span class="pl-k">:</span> {
-        HOST<span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
-        NAME<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>newsdb<span class="pl-pds">'</span></span> 
+    <span class="pl-c1">DATABASE</span><span class="pl-k">:</span> {
+        <span class="pl-c1">HOST</span><span class="pl-k">:</span> <span class="pl-c1">process</span>.<span class="pl-smi">env</span>.<span class="pl-c1">IP</span> <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>localhost<span class="pl-pds">'</span></span>,
+        <span class="pl-c1">NAME</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>newsdb<span class="pl-pds">'</span></span> 
     },
-    API<span class="pl-k">:</span> {
-        KEY<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>...<span class="pl-pds">'</span></span>,
-        SECTIONS<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>world<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>sport<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>football<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>commentisfree<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>culture<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>business<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>lifeandstyle<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>fashion<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>environment<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>technology<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>travel<span class="pl-pds">'</span></span>],
-        FIELDS<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>headline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>trailText<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>byline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>body<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>shortUrl<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>thumbnail<span class="pl-pds">'</span></span>]
+    <span class="pl-c1">API</span><span class="pl-k">:</span> {
+        <span class="pl-c1">KEY</span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>...<span class="pl-pds">'</span></span>,
+        <span class="pl-c1">SECTIONS</span><span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>world<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>sport<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>football<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>commentisfree<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>culture<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>business<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>lifeandstyle<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>fashion<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>environment<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>technology<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>travel<span class="pl-pds">'</span></span>],
+        <span class="pl-c1">FIELDS</span><span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>headline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>trailText<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>byline<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>main<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>body<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>shortUrl<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>thumbnail<span class="pl-pds">'</span></span>]
     }
 }
 
