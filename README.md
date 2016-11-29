@@ -298,7 +298,6 @@ module.exports = config;
 ```js
 var express      = require('express'),
     path         = require('path'),
-    handlebars   = require('express-handlebars'),
     mongoose     = require('mongoose'),
     config       = require('../etc/config');
 ```
@@ -992,9 +991,8 @@ var router     = require('express').Router();
 var controller = require('../controllers/index.controller');
 
 router.get('/', (req, res) => {
-	res.status(201)		// 201 - Webpage created
-		.render('home');
-	controller.reserve();
+	res.status(201);	// 201 - Webpage created
+	controller.reserve();	// Let's fetch some data from guardian API
 });
 
 module.exports = router;
